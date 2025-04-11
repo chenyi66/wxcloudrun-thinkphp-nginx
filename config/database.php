@@ -24,22 +24,15 @@ return [
             // 数据库类型
             'type' => 'mysql',
             // 服务器地址
-            'hostname' => ($mysql_address = env('MYSQL_ADDRESS', '')) ? (strpos($mysql_address, ':') !== false ? explode(':', $mysql_address)[0] : $mysql_address) : '127.0.0.1',
+            'hostname' => preg_split('/:/',getenv('MYSQL_ADDRESS'))[0],
             // 服务器端口
-            'hostport' => ($mysql_address = env('MYSQL_ADDRESS', '')) ? (strpos($mysql_address, ':') !== false ? explode(':', $mysql_address)[1] : '3306') : '3306',
+            'hostport' =>  preg_split('/:/',getenv('MYSQL_ADDRESS'))[1],
             // 用户名
-            'username' => env('MYSQL_USERNAME'),
+            'username' => getenv('MYSQL_USERNAME'),
             // 密码
-            'password' => env('MYSQL_PASSWORD'),
-            // 'hostname' => “172.16.2.10”,
-            // // 服务器端口
-            // 'hostport' => 3308,
-            // // 用户名
-            // 'username' => “cimer”,            
-            // // 密码
-            // 'password' => "cimer@@123@Z02O",
+            'password' => getenv('MYSQL_PASSWORD'),
             // 数据库名
-            'database' => env('MYSQL_DATABASE', 'thinkphp_demo'),
+            'database' => (getenv('MYSQL_DATABASE') == null) ? 'thinkphp_demo' : getenv('MYSQL_DATABASE'),
             // 数据库连接参数
             'params' => [],
             // 数据库编码默认采用utf8
