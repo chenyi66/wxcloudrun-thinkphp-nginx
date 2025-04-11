@@ -1,0 +1,13 @@
+/vendor/
+.DS_Store
+Thumbs.db
+/.idea/
+/.vscode/
+*.log
+/runtime/*
+!runtime/.gitignore
+/public/storage
+.env
+
+# 数据库配置文件
+/config/database.php

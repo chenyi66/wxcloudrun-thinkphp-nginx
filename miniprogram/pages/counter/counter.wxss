@@ -1,0 +1,191 @@
+.container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f5f5f5;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    align-self: flex-start;
+}
+
+/* 日历部分样式 */
+.calendar-section {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 10px;
+}
+
+.week-day {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    padding: 5px 0;
+}
+
+.calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.date-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.date-item.available {
+    background-color: #e8f5e9;
+    color: #4caf50;
+}
+
+.date-item.disabled {
+    background-color: #f5f5f5;
+    color: #999;
+}
+
+.date-item.selected {
+    background-color: #4caf50;
+    color: white;
+}
+
+.date-status {
+    font-size: 10px;
+    margin-top: 2px;
+}
+
+/* 时间段选择样式 */
+.time-section {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.time-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 5px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.time-slot.available {
+    background-color: #e3f2fd;
+    color: #2196f3;
+}
+
+.time-slot.disabled {
+    background-color: #f5f5f5;
+    color: #999;
+}
+
+.time-slot.selected {
+    background-color: #2196f3;
+    color: white;
+}
+
+.slot-capacity {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* 表单部分样式 */
+.form-section {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.form-item {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.form-item input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0 15px;
+    font-size: 14px;
+}
+
+.required {
+    color: #f44336;
+    margin-right: 5px;
+    position: absolute;
+    left: -10px;
+    top: 12px;
+}
+
+.service-options {
+    padding-left: 15px;
+}
+
+.service-options .label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+radio-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+radio {
+    font-size: 14px;
+    color: #666;
+}
+
+/* 提交按钮样式 */
+.submit-btn {
+    width: 90%;
+    height: 44px;
+    border-radius: 22px;
+    font-size: 16px;
+    margin-top: 20px;
+    background-color: #4caf50;
+}
+
+.submit-btn[disabled] {
+    background-color: #ccc;
+    color: #fff;
+}

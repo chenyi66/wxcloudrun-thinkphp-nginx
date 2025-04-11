@@ -1,0 +1,21 @@
+<view class="container">
+    <view class="title">计数器示例</view>
+    <view class="card">
+        <view class="counter-title">当前计数</view>
+        <view class="counter">{{count}}</view>
+        <view class="button-group">
+            <view class="btn" bindtap="decrement" hover-class="btn-hover">
+                <text>-</text>
+            </view>
+            <view class="btn" bindtap="increment" hover-class="btn-hover">
+                <text>+</text>
+            </view>
+        </view>
+        <view class="btn clear-btn" bindtap="clear" hover-class="btn-hover">
+            <text>清零</text>
+        </view>
+    </view>
+    <view class="loading" wx:if="{{loading}}">
+        <view class="loading-icon"></view>
+    </view>
+</view>

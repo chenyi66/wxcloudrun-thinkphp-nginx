@@ -1,0 +1,100 @@
+/* pages/index/index.wxss */
+.container {
+    padding: 40rpx 0;
+}
+
+.title {
+    font-size: 36rpx;
+    color: #333;
+    text-align: center;
+    margin-bottom: 60rpx;
+}
+
+.card {
+    width: 85%;
+    padding: 40rpx;
+    background: #fff;
+    border-radius: 20rpx;
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.counter-title {
+    font-size: 28rpx;
+    color: #666;
+    text-align: center;
+    margin-bottom: 20rpx;
+}
+
+.counter {
+    font-size: 80rpx;
+    font-weight: bold;
+    color: #07c160;
+    text-align: center;
+    margin: 40rpx 0;
+    text-shadow: 0 2rpx 4rpx rgba(7, 193, 96, 0.2);
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30rpx;
+}
+
+.btn {
+    width: 120rpx;
+    height: 120rpx;
+    line-height: 120rpx;
+    text-align: center;
+    background: #07c160;
+    color: #fff;
+    border-radius: 60rpx;
+    margin: 0 30rpx;
+    font-size: 48rpx;
+    box-shadow: 0 4rpx 10rpx rgba(7, 193, 96, 0.3);
+    transition: all 0.3s ease;
+}
+
+.clear-btn {
+    width: 200rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+    font-size: 32rpx;
+    margin: 20rpx auto 0;
+}
+
+.btn-hover {
+    transform: scale(0.95);
+    opacity: 0.9;
+}
+
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.loading-icon {
+    width: 60rpx;
+    height: 60rpx;
+    border: 6rpx solid #f3f3f3;
+    border-top: 6rpx solid #07c160;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

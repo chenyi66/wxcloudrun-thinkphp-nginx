@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>预约管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h2>预约管理</h2>
+
+        <!-- 搜索表单 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form id="searchForm" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">开始日期</label>
+                        <input type="text" class="form-control date-picker" id="startDate" name="startDate">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">结束日期</label>
+                        <input type="text" class="form-control date-picker" id="endDate" name="endDate">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">姓名</label>
+                        <input type="text" class="form-control" id="searchName" name="searchName" placeholder="输入姓名搜索">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary d-block">搜索</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 预约列表 -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>姓名</th>
+                        <th>电话</th>
+                        <th>年龄</th>
+                        <th>服务项目</th>
+                        <th>预约日期</th>
+                        <th>预约时间</th>
+                        <th>状态</th>
+                        <th>操作人</th>
+                        <th>金额</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="appointmentList">
+                    <!-- 预约数据将通过 JavaScript 动态加载 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">预约详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">备注</label>
+                        <div id="detailRemark" class="form-control-plaintext"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">图片</label>
+                        <div id="detailImage">
+                            <img src="" class="img-fluid d-none" alt="预约图片">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 操作确认模态框 -->
+    <div class="modal fade" id="operatorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">请输入操作人姓名和项目金额</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="operatorName" placeholder="请输入姓名">
+                    </div>
+                    <div class="mb-3">
+                        <input type="number" class="form-control" id="amount" placeholder="请输入项目金额" step="0.01" min="0">
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" id="remark" placeholder="请输入备注信息" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">上传图片</label>
+                        <input type="file" class="form-control" id="image" accept="image/*">
+                    </div>
+                    <input type="hidden" id="appointmentId">
+                    <input type="hidden" id="actionType">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
+    <script>
+        // 初始化日期选择器
+        flatpickr('.date-picker', {
+            locale: 'zh',
+            dateFormat: 'Y-m-d'
+        });
+
+        // 获取预约列表
+        function loadAppointments() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const searchName = document.getElementById('searchName').value;
+
+            fetch('/appointment/getList', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    start_date: startDate,
+                    end_date: endDate,
+                    name: searchName
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        renderAppointments(data.data);
+                    } else {
+                        alert('加载预约列表失败：' + data.message);
+                    }
+                });
+        }
+
+        // 渲染预约列表
+        function renderAppointments(appointments) {
+            const tbody = document.getElementById('appointmentList');
+            tbody.innerHTML = '';
+
+            appointments.forEach(appointment => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${appointment.id}</td>
+                    <td>${appointment.name}</td>
+                    <td>${appointment.phone}</td>
+                    <td>${appointment.age}</td>
+                    <td>${appointment.service}</td>
+                    <td>${appointment.appointment_date}</td>
+                    <td>${appointment.appointment_time}</td>
+                    <td>${appointment.status_text}</td>
+                    <td>${appointment.operator || '-'}</td>
+                    <td>${appointment.status === 2 ? (appointment.amount || 0).toFixed(2) : '-'}</td>
+                    <td>${appointment.remark ? '查看' : '-'}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="showDetailModal(${appointment.id})">详情</button>
+                        ${appointment.status === 1 ? `
+                            <button class="btn btn-success btn-sm" onclick="showOperatorModal(${appointment.id}, 2)">完成</button>
+                            <button class="btn btn-danger btn-sm" onclick="showOperatorModal(${appointment.id}, 3)">取消</button>
+                        ` : ''}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 显示操作人输入模态框
+        function showOperatorModal(id, status) {
+            document.getElementById('appointmentId').value = id;
+            document.getElementById('actionType').value = status;
+            document.getElementById('operatorName').value = '';
+            new bootstrap.Modal(document.getElementById('operatorModal')).show();
+        }
+
+        // 更新预约状态
+        // 显示详情模态框
+        function showDetailModal(id) {
+            fetch(`/appointment/getDetail?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        document.getElementById('detailRemark').textContent = data.data.remark || '无';
+                        const imgElement = document.querySelector('#detailImage img');
+                        if (data.data.image) {
+                            imgElement.src = data.data.image;
+                            imgElement.classList.remove('d-none');
+                        } else {
+                            imgElement.classList.add('d-none');
+                        }
+                        new bootstrap.Modal(document.getElementById('detailModal')).show();
+                    } else {
+                        alert('获取详情失败：' + data.message);
+                    }
+                });
+        }
+
+        function updateAppointmentStatus(id, status, operator, amount) {
+            fetch('/appointment/updateStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id, status, operator, amount })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        alert('操作成功');
+                        loadAppointments();
+                    } else {
+                        alert(data.message || '操作失败');
+                    }
+                });
+        }
+
+        // 确认操作按钮点击事件
+        document.getElementById('confirmAction').addEventListener('click', function () {
+            const id = document.getElementById('appointmentId').value;
+            const status = document.getElementById('actionType').value;
+            const operator = document.getElementById('operatorName').value.trim();
+            const amount = document.getElementById('amount').value;
+            const remark = document.getElementById('remark').value.trim();
+            const imageFile = document.getElementById('image').files[0];
+
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('status', status);
+            formData.append('operator', operator);
+            formData.append('amount', amount);
+            formData.append('remark', remark);
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
+            if (!operator) {
+                alert('请输入操作人姓名');
+                return;
+            }
+
+            if (status === '2' && (!amount || parseFloat(amount) <= 0)) {
+                alert('请输入有效的项目金额');
+                return;
+            }
+
+            fetch('/appointment/updateStatus', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        alert('操作成功');
+                        loadAppointments();
+                    } else {
+                        alert(data.message || '操作失败');
+                    }
+                });
+            bootstrap.Modal.getInstance(document.getElementById('operatorModal')).hide();
+        });
+
+        // 页面加载完成后自动加载预约列表
+        document.addEventListener('DOMContentLoaded', loadAppointments);
+
+        // 搜索表单提交事件
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            loadAppointments();
+        });
+    </script>
+</body>
+
+</html>
