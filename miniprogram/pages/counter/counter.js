@@ -15,12 +15,33 @@ Page({
             { time: '20:00', capacity: 2, available: true }
         ],
         selectedDate: '',
-        selectedTimeSlot: '',
+        selectedTimeSlots: [],
+        mainServices: [
+            {
+                name: '小儿推拿',
+                subServices: ['小儿推拿']
+            },
+            {
+                name: '产后康复',
+                subServices: ['子宫复旧', '盆底肌', '骨盆', '腹直肌', '形体塑形', '卵巢保养', '脏器养护', '危险修复', '产后发汗', '古法搓浴']
+            },
+            {
+                name: '乳腺',
+                subServices: ['开奶', '乳腺疏通', '乳腺炎', '催乳', '科学回奶', '排残奶']
+            },
+            {
+                name: '成人理疗',
+                subServices: ['头疗', '全息理疗', '面部按摩', '乳腺疏通', '腰背', '肩背', '臂部', '手臂', '太极刮痧', '艾灸刮痧', '手工拔罐', '随身灸', '穴位艾灸', '私密艾灸', '隔姜灸', '三伏贴', '三伏灸', '督脉灸', '拔罐', '走罐', '滑罐', '拔罐减肥']
+            }
+        ],
+        selectedMainService: '',
+        selectedSubServices: [],
+        currentSubServices: [], // 添加当前选中主服务的子服务列表
         formData: {
             name: '',
             phone: '',
             age: '',
-            service: ''
+            services: []
         },
         canSubmit: false
     },
@@ -95,7 +116,7 @@ Page({
             dateList,
             selectedDate,
             timeSlots: [],
-            selectedTimeSlot: '',
+            selectedTimeSlots: [],
             canSubmit: false
         })
 
@@ -105,14 +126,25 @@ Page({
     // 选择时间段
     selectTimeSlot(e) {
         const selectedTime = e.currentTarget.dataset.time
-        const timeSlots = this.data.timeSlots.map(item => ({
-            ...item,
-            selected: item.time === selectedTime
-        }))
+        const selectedIndex = parseInt(e.currentTarget.dataset.index)
+        const timeSlots = [...this.data.timeSlots]
+        const selectedTimeSlots = [...this.data.selectedTimeSlots]
+
+        // 切换选中状态
+        timeSlots[selectedIndex].selected = !timeSlots[selectedIndex].selected
+
+        if (timeSlots[selectedIndex].selected) {
+            selectedTimeSlots.push(selectedTime)
+        } else {
+            const index = selectedTimeSlots.indexOf(selectedTime)
+            if (index > -1) {
+                selectedTimeSlots.splice(index, 1)
+            }
+        }
 
         this.setData({
             timeSlots,
-            selectedTimeSlot: selectedTime
+            selectedTimeSlots
         })
 
         this.checkCanSubmit()
@@ -128,20 +160,91 @@ Page({
         this.checkCanSubmit();
     },
 
-    selectService(e) {
+    selectMainService(e) {
+        const mainServiceName = e.currentTarget.dataset.name
+        const mainService = this.data.mainServices.find(service => service.name === mainServiceName)
+
         this.setData({
-            'formData.service': e.detail.value
+            selectedMainService: mainServiceName,
+            currentSubServices: mainService ? mainService.subServices : [] // 更新当前子服务列表
         })
+    },
+
+    selectSubService(e) {
+        const selectedService = e.currentTarget.dataset.name
+        let selectedSubServices = [...this.data.selectedSubServices]
+        const selectedTimeSlots = this.data.selectedTimeSlots
+
+        // 如果还没有选择时间段，提示用户先选择时间段
+        if (selectedTimeSlots.length === 0) {
+            wx.showToast({
+                title: '请先选择时间段',
+                icon: 'none'
+            })
+            return
+        }
+
+        // 检查是否是取消选择
+        const index = selectedSubServices.indexOf(selectedService)
+        if (index > -1) {
+            // 取消选择
+            selectedSubServices.splice(index, 1)
+            this.setData({
+                selectedSubServices,
+                'formData.services': selectedSubServices
+            })
+        } else {
+            // 检查是否还有可选择的时间段
+            if (selectedSubServices.length >= selectedTimeSlots.length) {
+                wx.showToast({
+                    title: '已选择所有时间段对应的项目',
+                    icon: 'none'
+                })
+                return
+            }
+            // 添加新选择的项目
+            selectedSubServices.push(selectedService)
+            this.setData({
+                selectedSubServices,
+                'formData.services': selectedSubServices
+            })
+        }
+
+        // 更新用户界面提示，显示已选择的时间段和项目对应关系
+        let message = '当前预约：\n'
+        selectedSubServices.forEach((service, idx) => {
+            const timeSlot = selectedTimeSlots[idx]
+            message += `${timeSlot} → ${service}\n`
+        })
+
+        // 如果还有未选择项目的时间段，提示用户继续选择
+        if (selectedSubServices.length < selectedTimeSlots.length) {
+            const nextTime = selectedTimeSlots[selectedSubServices.length]
+            message += `\n请为 ${nextTime} 选择项目\n`
+            message += '(可从任意大项中选择小项)'
+        }
+
+        wx.showModal({
+            title: '预约项目',
+            content: message,
+            showCancel: false,
+            confirmText: '确定'
+        })
+
         this.checkCanSubmit()
     },
 
     // 检查是否可以提交
     checkCanSubmit() {
-        const { name, phone, age, service } = this.data.formData
+        const { name, phone, age, services } = this.data.formData
         const phoneRegex = /^1[3-9]\d{9}$/
         const isPhoneValid = phoneRegex.test(phone)
-        const canSubmit = name && isPhoneValid && age && service &&
-            this.data.selectedDate && this.data.selectedTimeSlot
+
+        // 验证时间段和项目数量是否相等
+        const isTimeServiceMatch = services.length === this.data.selectedTimeSlots.length
+
+        const canSubmit = name && isPhoneValid && age && services.length > 0 &&
+            this.data.selectedDate && this.data.selectedTimeSlots.length > 0 && isTimeServiceMatch
 
         this.setData({ canSubmit })
 
@@ -151,16 +254,34 @@ Page({
                 icon: 'none'
             })
         }
+
+        if (services.length > 0 && !isTimeServiceMatch) {
+            wx.showToast({
+                title: '时间段和项目数量必须相同',
+                icon: 'none'
+            })
+        }
     },
 
     // 提交预约
     submitAppointment() {
         if (!this.data.canSubmit) return
 
+        // 组合每个时间段和服务项目的一一对应关系
+        const appointments = [];
+        this.data.selectedTimeSlots.forEach((time, index) => {
+            appointments.push({
+                date: this.data.selectedDate,
+                time: time,
+                name: this.data.formData.name,
+                phone: this.data.formData.phone,
+                age: this.data.formData.age,
+                service: this.data.formData.services[index]
+            })
+        })
+
         const appointmentData = {
-            date: this.data.selectedDate,
-            time: this.data.selectedTimeSlot,
-            ...this.data.formData
+            appointments: appointments
         }
 
         app.request({
@@ -176,12 +297,12 @@ Page({
                 // 重置表单
                 this.setData({
                     selectedDate: '',
-                    selectedTimeSlot: '',
+                    selectedTimeSlots: [],
                     formData: {
                         name: '',
                         phone: '',
                         age: '',
-                        service: ''
+                        services: []
                     },
                     canSubmit: false
                 })

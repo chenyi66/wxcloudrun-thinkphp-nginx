@@ -1,7 +1,6 @@
 {
     "pages": [
-        "pages/counter/counter",
-        "pages/index/index"
+        "pages/counter/counter"
     ],
     "window": {
         "backgroundTextStyle": "light",

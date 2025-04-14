@@ -17,14 +17,15 @@
     <view class="time-section" wx:if="{{selectedDate}}">
         <view class="section-title">预约时段</view>
         <view class="time-slots">
-            <view wx:for="{{timeSlots}}" wx:key="time" class="time-slot {{item.available ? 'available' : 'disabled'}} {{item.selected ? 'selected' : ''}}" bindtap="{{item.available ? 'selectTimeSlot' : ''}}" data-time="{{item.time}}">
+            <view wx:for="{{timeSlots}}" wx:key="time" class="time-slot {{item.available ? 'available' : 'disabled'}} {{item.selected ? 'selected' : ''}}" bindtap="{{item.available ? 'selectTimeSlot' : ''}}" data-time="{{item.time}}" data-index="{{index}}">
                 <text>{{item.time}}</text>
-                <!-- <text class="slot-capacity">余{{item.capacity}}位</text> -->
+                <text class="slot-capacity">余{{item.capacity}}位</text>
+                <icon wx:if="{{item.selected}}" type="success" size="16" color="#07c160" />
             </view>
         </view>
     </view>
     <!-- 预约表单 -->
-    <view class="form-section" wx:if="{{selectedTimeSlot}}">
+    <view class="form-section" wx:if="{{selectedTimeSlots.length > 0}}">
         <view class="section-title">预约信息</view>
         <view class="form-item">
             <text class="required">*</text>
@@ -40,13 +41,20 @@
         </view>
         <view class="form-item service-options">
             <text class="required">*</text>
-            <text class="label">预约项目</text>
-            <radio-group bindchange="selectService">
-                <radio value="推拿">推拿</radio>
-                <radio value="火龙罐">火龙罐</radio>
-                <radio value="腹直肌手法">腹直肌手法</radio>
-                <radio value="平衡罐">平衡罐</radio>
-            </radio-group>
+            <text class="label">选择项目类型</text>
+            <view class="main-services">
+                <view wx:for="{{mainServices}}" wx:key="name" class="main-service-item {{selectedMainService === item.name ? 'selected' : ''}}" bindtap="selectMainService" data-name="{{item.name}}">
+                    {{item.name}}
+                </view>
+            </view>
+            <view class="sub-services" wx:if="{{selectedMainService}}">
+                <text class="sub-label">选择具体项目</text>
+                <view class="sub-service-list">
+                    <view wx:for="{{currentSubServices}}" wx:key="*this" class="sub-service-item {{selectedSubServices.includes(item) ? 'selected' : ''}}" bindtap="selectSubService" data-name="{{item}}">
+                        {{item}}
+                    </view>
+                </view>
+            </view>
         </view>
     </view>
     <!-- 提交按钮 -->

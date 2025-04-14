@@ -1,5 +1,6 @@
 <?php
 declare (strict_types = 1);
+
 namespace app\controller;
 
 use app\model\TimeSlot;
@@ -10,9 +11,51 @@ use think\response\Html;
 use think\response\Json;
 use think\facade\Db;
 use think\facade\Filesystem;
+use think\facade\Validate;
 
 class AppointmentAdmin
 {
+    // 创建预约
+    public function create(Request $request)
+    {
+        $data = $request->post();
+
+        // 验证数据
+        $validate = Validate::rule([
+            'appointment_date' => 'require|date',
+            //'appointment_time' => 'require|in:08:30,09:40,10:50,14:30,15:50,17:30,18:50,20:00',
+            'name' => 'require|max:50',
+            'phone' => 'require|regex:/^1[3-9]\d{9}$/',
+            'age' => 'require|number|between:1,150',
+            //'service' => 'require|in:常规理疗,小儿推拿,全身按摩'
+        ]);
+
+        if (!$validate->check($data)) {
+            return json(['code' => 1, 'message' => $validate->getError()]);
+        }
+
+        // 检查时间段是否已满
+
+        try {
+            // 创建预约记录
+            $appointmentData = [
+                'appointment_date' => $data['appointment_date'],
+                'appointment_time' => $data['appointment_time'],
+                'name' => $data['name'],
+                'phone' => $data['phone'],
+                'age' => $data['age'],
+                'service' => $data['service'],
+                'status' => 1, // 待完成状态
+                'create_time' => date('Y-m-d H:i:s')
+            ];
+
+            Db::name('appointments')->insert($appointmentData);
+
+            return json(['code' => 0, 'message' => '预约创建成功']);
+        } catch (\Exception $e) {
+            return json(['code' => 1, 'message' => '预约创建失败：' . $e->getMessage()]);
+        }
+    }
     public function index(): Html
     {
         # html路径: ../view/index.html

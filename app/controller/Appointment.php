@@ -85,46 +85,67 @@ class Appointment
     public function submit(Request $request)
     {
         $data = $request->post();
+        $appointments = $data['appointments'] ?? [];
 
+        if (empty($appointments)) {
+            return json(['code' => 1, 'message' => '预约数据不能为空']);
+        }
+
+        // 验证第一条数据的基本信息（因为所有预约使用相同的个人信息）
+        $firstAppointment = $appointments[0];
+        
         // 验证必填字段
-        if (!$data['name'] || !$data['phone'] || !$data['age'] || 
-            !$data['service'] || !$data['date'] || !$data['time']) {
-            return json(['code' => 1, 'message' => '请填写完整信息']);
+        if (!$firstAppointment['name'] || !$firstAppointment['phone'] || !$firstAppointment['age']) {
+            return json(['code' => 1, 'message' => '请填写完整个人信息']);
         }
 
         // 验证手机号格式
-        if (!preg_match('/^1[3-9]\d{9}$/', $data['phone'])) {
+        if (!preg_match('/^1[3-9]\d{9}$/', $firstAppointment['phone'])) {
             return json(['code' => 1, 'message' => '手机号格式不正确']);
         }
 
         // 验证年龄
-        if (!is_numeric($data['age']) || $data['age'] < 0 || $data['age'] > 150) {
+        if (!is_numeric($firstAppointment['age']) || $firstAppointment['age'] < 0 || $firstAppointment['age'] > 150) {
             return json(['code' => 1, 'message' => '年龄不合法']);
         }
 
-        // 检查时间段是否已满
-        $bookedCount = Db::name('appointments')
-            ->where('appointment_date', $data['date'])
-            ->where('appointment_time', $data['time'])
-            ->count();
-
-        if ($bookedCount >= 10) {
-            return json(['code' => 1, 'message' => '该时间段预约已满']);
+        // 检查每个时间段是否已满
+        $timeSlotCounts = [];
+        foreach ($appointments as $appointment) {
+            $key = $appointment['date'] . '_' . $appointment['time'];
+            if (!isset($timeSlotCounts[$key])) {
+                $bookedCount = Db::name('appointments')
+                    ->where('appointment_date', $appointment['date'])
+                    ->where('appointment_time', $appointment['time'])
+                    ->count();
+                $timeSlotCounts[$key] = $bookedCount;
+            }
+            
+            if ($timeSlotCounts[$key] >= 10) {
+                return json(['code' => 1, 'message' => '时间段' . $appointment['time'] . '预约已满']);
+            }
+            $timeSlotCounts[$key]++;
         }
 
-        // 保存预约信息
+        // 批量保存预约信息
         try {
-            Db::name('appointments')->insert([
-                'name' => $data['name'],
-                'phone' => $data['phone'],
-                'age' => $data['age'],
-                'service' => $data['service'],
-                'appointment_date' => $data['date'],
-                'appointment_time' => $data['time'],
-                'status' => 1, // 1: 已预约
-                'create_time' => date('Y-m-d H:i:s')
-            ]);
+            $insertData = [];
+            $currentTime = date('Y-m-d H:i:s');
+            
+            foreach ($appointments as $appointment) {
+                $insertData[] = [
+                    'name' => $appointment['name'],
+                    'phone' => $appointment['phone'],
+                    'age' => $appointment['age'],
+                    'service' => $appointment['service'],
+                    'appointment_date' => $appointment['date'],
+                    'appointment_time' => $appointment['time'],
+                    'status' => 1, // 1: 已预约
+                    'create_time' => $currentTime
+                ];
+            }
 
+            Db::name('appointments')->insertAll($insertData);
             return json(['code' => 0, 'message' => '预约成功']);
         } catch (\Exception $e) {
             return json(['code' => 1, 'message' => '预约失败，请重试']);

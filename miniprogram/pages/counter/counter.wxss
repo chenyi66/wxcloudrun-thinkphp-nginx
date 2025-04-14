@@ -164,15 +164,78 @@
     color: #333;
 }
 
-radio-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+.service-options {
+    padding: 10px 0;
+}
+
+.main-services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.main-service-item {
+    padding: 8px 15px;
+    background-color: #f5f5f5;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.main-service-item.selected {
+    background-color: #07c160;
+    color: white;
+}
+
+.sub-services {
+    margin-top: 15px;
+}
+
+.sub-label {
+    display: block;
+    margin: 10px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.sub-service-list {
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
-radio {
+.sub-service-item {
+    padding: 8px 15px;
+    background-color: #f5f5f5;
+    border-radius: 20px;
     font-size: 14px;
-    color: #666;
+    margin: 5px;
+    display: inline-block;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.sub-service-item.selected {
+    background-color: #07c160;
+    color: white;
+    box-shadow: 0 2px 4px rgba(7, 193, 96, 0.2);
+}
+
+.sub-service-item:not(.selected):hover {
+    background-color: #e8f5e9;
+    transform: translateY(-1px);
+}
+
+.sub-service-item.disabled {
+    background-color: #eee;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.sub-service-item.selected {
+    background-color: #07c160;
+    color: white;
 }
 
 /* 提交按钮样式 */

@@ -26,6 +26,8 @@ Route::post('/api/timeslot/updateDailyCapacity', 'TimeSlotAdmin/updateDailyCapac
 Route::post('/appointment/updateStatus', 'AppointmentAdmin/updateStatus');
 Route::post('/appointment/getList', 'AppointmentAdmin/getList');
 Route::get('/appointment/getDetail', 'AppointmentAdmin/getDetail');
+Route::post('/appointment/create', 'AppointmentAdmin/create');
+
 
 // 会员管理接口
 Route::post('/api/member/getList', 'MemberAdmin/getList');
