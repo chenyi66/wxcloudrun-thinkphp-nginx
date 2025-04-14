@@ -1,7 +1,7 @@
 App({
     globalData: {
         // baseUrl: 'http://localhost:27081',
-        baseUrl: 'https://thinkphp-nginx-5cpb-151538-4-1352299247.sh.run.tcloudbase.com:27081',
+        baseUrl: 'https://thinkphp-nginx-5cpb-151538-4-1352299247.sh.run.tcloudbase.com',
         userInfo: null
     },
 
