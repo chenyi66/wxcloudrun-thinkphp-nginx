@@ -47,11 +47,11 @@
                     {{item.name}}
                 </view>
             </view>
-            <view class="sub-services" wx:if="{{selectedMainService}}">
-                <text class="sub-label">选择具体项目</text>
-                <view class="sub-service-list">
-                    <view wx:for="{{currentSubServices}}" wx:key="*this" class="sub-service-item {{selectedSubServices.includes(item) ? 'selected' : ''}}" bindtap="selectSubService" data-name="{{item}}">
-                        {{item}}
+            <view class="sub-services" wx:if="{{currentSubServices.length > 0}}">
+                <text class="sub-label">具体项目：</text>
+                <view class="sub-service-items">
+                    <view class="sub-service-item {{item.selected ? 'selected' : ''}}" wx:for="{{currentSubServices}}" wx:key="index" class="sub-service-item {{item.selected ? 'selected' : ''}}" data-name="{{item.name}}" bindtap="selectSubService">
+                        {{item.name}}
                     </view>
                 </view>
             </view>

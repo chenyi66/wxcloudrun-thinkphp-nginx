@@ -164,9 +164,15 @@ Page({
         const mainServiceName = e.currentTarget.dataset.name
         const mainService = this.data.mainServices.find(service => service.name === mainServiceName)
 
+        // 将子服务转换为包含选中状态的对象数组
+        const currentSubServices = mainService ? mainService.subServices.map(service => ({
+            name: service,
+            selected: this.data.selectedSubServices.includes(service)
+        })) : []
+
         this.setData({
             selectedMainService: mainServiceName,
-            currentSubServices: mainService ? mainService.subServices : [] // 更新当前子服务列表
+            currentSubServices // 更新当前子服务列表，包含选中状态
         })
     },
 
@@ -191,7 +197,11 @@ Page({
             selectedSubServices.splice(index, 1)
             this.setData({
                 selectedSubServices,
-                'formData.services': selectedSubServices
+                'formData.services': selectedSubServices,
+                currentSubServices: this.data.currentSubServices.map(subService => ({
+                    name: subService.name,
+                    selected: selectedSubServices.includes(subService.name)
+                }))
             })
         } else {
             // 检查是否还有可选择的时间段
@@ -206,7 +216,11 @@ Page({
             selectedSubServices.push(selectedService)
             this.setData({
                 selectedSubServices,
-                'formData.services': selectedSubServices
+                'formData.services': selectedSubServices,
+                currentSubServices: this.data.currentSubServices.map(subService => ({
+                    name: subService.name,
+                    selected: selectedSubServices.includes(subService.name)
+                }))
             })
         }
 
