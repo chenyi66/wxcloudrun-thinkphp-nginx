@@ -5,9 +5,17 @@ namespace app\controller;
 //use app\BaseController;
 use think\facade\Db;
 use think\Request;
+use think\response\Html;
+use think\response\Json;
 
 class Appointment 
 {
+
+    public function index(): Html
+    {
+        # html路径: ../view/index.html
+        return response(file_get_contents(dirname(dirname(__FILE__)).'/view/appointment.html'));
+    }
     // 获取可预约时间段
     public function getTimeSlots(Request $request)
     {

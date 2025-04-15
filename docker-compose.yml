@@ -18,9 +18,6 @@ services:
       - wxcloud=wxcloudrun-thinkphp-nginx
       - role=container
     environment:
-      # - MYSQL_USERNAME=cimer
-      # - MYSQL_PASSWORD=cimer@@123@Z02O
-      # - MYSQL_ADDRESS=172.16.2.10:3308
       - MYSQL_USERNAME=
       - MYSQL_PASSWORD=
       - MYSQL_ADDRESS=

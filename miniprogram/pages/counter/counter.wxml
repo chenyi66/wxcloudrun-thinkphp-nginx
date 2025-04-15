@@ -19,7 +19,7 @@
         <view class="time-slots">
             <view wx:for="{{timeSlots}}" wx:key="time" class="time-slot {{item.available ? 'available' : 'disabled'}} {{item.selected ? 'selected' : ''}}" bindtap="{{item.available ? 'selectTimeSlot' : ''}}" data-time="{{item.time}}" data-index="{{index}}">
                 <text>{{item.time}}</text>
-                <text class="slot-capacity">余{{item.capacity}}位</text>
+                <!-- <text class="slot-capacity">余{{item.capacity}}位</text> -->
                 <icon wx:if="{{item.selected}}" type="success" size="16" color="#07c160" />
             </view>
         </view>
