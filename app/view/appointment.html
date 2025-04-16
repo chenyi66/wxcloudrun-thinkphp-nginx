@@ -8,79 +8,64 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4a90e2;
-            --hover-color: #357abd;
+            --primary-color: #4CAF50;
+            --hover-color: #45a049;
             --border-radius: 8px;
             --transition-time: 0.3s;
+            --spacing: 12px;
         }
 
         body {
-            background-color: #f8f9fa;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         .container {
-            max-width: 800px;
-            padding: 2rem;
+            width: 100%;
+            max-width: 100%;
+            padding: var(--spacing);
             background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
         }
 
         .date-item {
             cursor: pointer;
-            padding: 15px;
+            padding: 10px;
             border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            margin: 8px;
+            border-radius: var(--border-radius);
+            margin: 4px;
             text-align: center;
-            transition: all 0.3s ease;
-            flex: 0 0 calc(25% - 16px);
+            transition: all var(--transition-time) ease;
+            flex: 0 0 calc(14.28% - 8px);
             background-color: white;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 80px;
-        }
-
-        .date-item:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(74, 144, 226, 0.15);
+            min-height: 60px;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .date-item.selected {
-            background: linear-gradient(135deg, var(--primary-color), #357abd);
+            background: var(--primary-color);
             color: white;
             border-color: transparent;
-            box-shadow: 0 6px 12px rgba(74, 144, 226, 0.2);
-        }
-
-        .date-item .date {
-            font-size: 1.1em;
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-
-        .date-item .weekday {
-            font-size: 0.9em;
-            opacity: 0.8;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
         }
 
         .time-slot {
             cursor: pointer;
-            padding: 10px;
+            padding: 12px 8px;
             border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin: 5px;
+            border-radius: var(--border-radius);
+            margin: 4px;
             text-align: center;
-            transition: all 0.3s ease;
-            flex: 0 0 calc(20% - 10px);
-        }
-
-        .time-slot:hover:not(.unavailable) {
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
+            transition: all var(--transition-time) ease;
+            flex: 0 0 calc(25% - 8px);
+            font-size: 0.95em;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .time-slot.selected {
@@ -89,64 +74,104 @@
             border-color: transparent;
         }
 
-        .time-slot.unavailable {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .service-types {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .service-type-item {
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 20px;
             background-color: #f5f5f5;
+            color: #333;
+            transition: all var(--transition-time) ease;
+            border: none;
+        }
+
+        .service-type-item.selected {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .service-item {
             cursor: pointer;
-            padding: 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin: 5px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .service-item:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 4px;
+            background-color: #f5f5f5;
+            color: #333;
+            transition: all var(--transition-time) ease;
+            border: none;
+            display: inline-block;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .service-item.selected {
             background-color: var(--primary-color);
             color: white;
-            border-color: transparent;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
         }
 
         .sub-service {
             display: none;
-            margin-left: 20px;
+            margin-top: 15px;
         }
 
         .sub-service.active {
             display: block;
         }
 
-        @media (max-width: 768px) {
-            .date-item {
-                flex: 0 0 calc(33.33% - 16px);
-                padding: 12px;
-                min-height: 70px;
-            }
-
-            .time-slot {
-                flex: 0 0 calc(33.33% - 10px);
-            }
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: var(--spacing);
         }
 
-        @media (max-width: 576px) {
-            .date-item {
-                flex: 0 0 calc(50% - 16px);
-                padding: 10px;
-                min-height: 60px;
-            }
+        h4 {
+            font-size: 1.1em;
+            margin: var(--spacing) 0;
+        }
 
-            .time-slot {
-                flex: 0 0 calc(50% - 10px);
-            }
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            font-size: 1em;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            background-color: #fff;
+            transition: border-color var(--transition-time) ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1em;
+            border-radius: var(--border-radius);
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            margin-top: var(--spacing);
+            transition: background-color var(--transition-time) ease;
+        }
+
+        .btn-primary:active {
+            background: var(--hover-color);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -166,9 +191,11 @@
         </div>
         <!-- 服务项目选择 -->
         <div class="mb-4">
-            <h4>选择服务项目</h4>
+            <h4>选择项目类型</h4>
+            <div class="service-types" id="serviceTypes"></div>
             <div id="serviceList"></div>
         </div>
+
         <!-- 预约表单 -->
         <div class="mb-4">
             <h4>填写预约信息</h4>
@@ -213,6 +240,45 @@
                 subServices: ['头疗', '全息理疗', '面部按摩', '乳腺疏通', '腰背', '肩背', '臂部', '手臂', '太极刮痧', '艾灸刮痧', '手工拔罐', '随身灸', '穴位艾灸', '私密艾灸', '隔姜灸', '三伏贴', '三伏灸', '督脉灸', '拔罐', '走罐', '滑罐', '拔罐减肥']
             }
         ];
+
+        function initServices() {
+            const serviceTypes = document.getElementById('serviceTypes');
+            const serviceList = document.getElementById('serviceList');
+
+            mainServices.forEach(mainService => {
+                const typeButton = document.createElement('button');
+                typeButton.className = 'service-type-item';
+                typeButton.textContent = mainService.name;
+                typeButton.addEventListener('click', () => {
+                    document.querySelectorAll('.service-type-item').forEach(btn => btn.classList.remove('selected'));
+                    typeButton.classList.add('selected');
+                    showSubServices(mainService);
+                });
+                serviceTypes.appendChild(typeButton);
+            });
+        }
+
+        function showSubServices(mainService) {
+            const serviceList = document.getElementById('serviceList');
+            serviceList.innerHTML = '';
+
+            const subServicesDiv = document.createElement('div');
+            subServicesDiv.className = 'sub-service active';
+
+            mainService.subServices.forEach(subService => {
+                const subServiceDiv = document.createElement('div');
+                subServiceDiv.className = 'service-item';
+                subServiceDiv.textContent = subService;
+                const isSelected = selectedSubServices.includes(subService);
+                if (isSelected) {
+                    subServiceDiv.classList.add('selected');
+                }
+                subServiceDiv.addEventListener('click', () => selectSubService(subService, subServiceDiv));
+                subServicesDiv.appendChild(subServiceDiv);
+            });
+
+            serviceList.appendChild(subServicesDiv);
+        }
 
         function initDateList() {
             const dateList = document.getElementById('dateList');
@@ -295,35 +361,6 @@
                 element.classList.add('selected');
             }
             updateSubmitButton();
-        }
-
-        function initServices() {
-            const serviceList = document.getElementById('serviceList');
-
-            mainServices.forEach(mainService => {
-                const mainServiceDiv = document.createElement('div');
-                mainServiceDiv.className = 'service-item';
-                mainServiceDiv.textContent = mainService.name;
-
-                const subServicesDiv = document.createElement('div');
-                subServicesDiv.className = 'sub-service';
-
-                mainService.subServices.forEach(subService => {
-                    const subServiceDiv = document.createElement('div');
-                    subServiceDiv.className = 'service-item';
-                    subServiceDiv.textContent = subService;
-                    subServiceDiv.addEventListener('click', () => selectSubService(subService, subServiceDiv));
-                    subServicesDiv.appendChild(subServiceDiv);
-                });
-
-                mainServiceDiv.addEventListener('click', () => {
-                    document.querySelectorAll('.sub-service').forEach(el => el.classList.remove('active'));
-                    subServicesDiv.classList.add('active');
-                });
-
-                serviceList.appendChild(mainServiceDiv);
-                serviceList.appendChild(subServicesDiv);
-            });
         }
 
         function selectSubService(service, element) {
