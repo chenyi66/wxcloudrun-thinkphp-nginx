@@ -6,7 +6,6 @@ Thumbs.db
 *.log
 /runtime/*
 !runtime/.gitignore
-.env
 
 # 数据库配置文件
 /config/database.php
