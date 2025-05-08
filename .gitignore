@@ -1,4 +1,5 @@
 /vendor/
+/conf/
 .DS_Store
 Thumbs.db
 /.idea/

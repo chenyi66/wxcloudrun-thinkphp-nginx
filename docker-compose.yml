@@ -10,7 +10,7 @@ services:
       sh -c "mkdir -p /app/public/storage && chmod -R 777 /app/public/storage &&
       sh run.sh"
     ports:
-      - '27081:80'
+      - '80:80'
     container_name: wxcloud_wxcloudrun-thinkphp-nginx
     labels:
       - wxPort=27082
